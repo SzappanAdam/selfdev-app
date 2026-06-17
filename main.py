@@ -1,4 +1,4 @@
-from task_manager import TaskManager
+from app.services.task_manager import TaskManager
 
 manager = TaskManager()
 
@@ -31,13 +31,13 @@ while True:
 ===== SELFDEV APP =====
 
 1 - Feladat hozzáadása
-2 - Feladatok listázása
-3 - Feladat készre jelölése
-4 - Feladat törlése
+2 - Összes feladat
+3 - Készre jelölés
+4 - Törlés
 5 - Keresés
-6 - Prioritás szűrés
-7 - Folyamatban lévő feladatok
-8 - Befejezett feladatok
+6 - Prioritás szerinti szűrés
+7 - Folyamatban lévők
+8 - Befejezettek
 0 - Kilépés
 """)
 
@@ -55,52 +55,60 @@ while True:
         )
 
         manager.add_task(
-            title=title,
-            category=category,
-            priority=priority,
-            due_date=due_date,
+            title,
+            category,
+            priority,
+            due_date
         )
-
-        print("Feladat létrehozva.")
 
     elif choice == "2":
 
-        print_tasks(manager.list_tasks())
+        print_tasks(
+            manager.list_tasks()
+        )
 
     elif choice == "3":
 
-        task_id = int(input("ID: "))
+        task_id = int(
+            input("ID: ")
+        )
 
-        if manager.complete_task(task_id):
-            print("Készre jelölve.")
-        else:
-            print("Nincs ilyen feladat.")
+        manager.complete_task(
+            task_id
+        )
 
     elif choice == "4":
 
-        task_id = int(input("ID: "))
+        task_id = int(
+            input("ID: ")
+        )
 
-        if manager.delete_task(task_id):
-            print("Törölve.")
-        else:
-            print("Nincs ilyen feladat.")
+        manager.delete_task(
+            task_id
+        )
 
     elif choice == "5":
 
-        keyword = input("Keresés: ")
+        keyword = input(
+            "Kulcsszó: "
+        )
 
         print_tasks(
-            manager.search_tasks(keyword)
+            manager.search_tasks(
+                keyword
+            )
         )
 
     elif choice == "6":
 
         priority = input(
-            "Prioritás (low/medium/high): "
+            "Prioritás: "
         )
 
         print_tasks(
-            manager.filter_by_priority(priority)
+            manager.filter_by_priority(
+                priority
+            )
         )
 
     elif choice == "7":
@@ -117,6 +125,3 @@ while True:
 
     elif choice == "0":
         break
-
-    else:
-        print("Érvénytelen választás.")

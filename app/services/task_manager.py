@@ -1,16 +1,20 @@
 import json
 import os
 
-from task import Task
+from app.models.task import Task
+from app.utils.logger import logger
 
 
 class TaskManager:
+
     def __init__(self, filename="tasks.json"):
         self.filename = filename
         self.tasks = []
+
         self.load_tasks()
 
     def load_tasks(self):
+
         if not os.path.exists(self.filename):
             self.tasks = []
             return
@@ -18,30 +22,44 @@ class TaskManager:
         with open(self.filename, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        self.tasks = [Task.from_dict(task) for task in data]
+        self.tasks = [
+            Task.from_dict(task)
+            for task in data
+        ]
 
     def save_tasks(self):
-        with open(self.filename, "w", encoding="utf-8") as f:
+
+        with open(
+            self.filename,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
             json.dump(
                 [task.to_dict() for task in self.tasks],
                 f,
                 indent=2,
-                ensure_ascii=False,
+                ensure_ascii=False
             )
 
     def generate_id(self):
+
         if not self.tasks:
             return 1
 
-        return max(task.id for task in self.tasks) + 1
+        return max(
+            task.id
+            for task in self.tasks
+        ) + 1
 
     def add_task(
         self,
         title,
         category="general",
         priority="medium",
-        due_date=None,
+        due_date=None
     ):
+
         task = Task(
             task_id=self.generate_id(),
             title=title,
@@ -51,35 +69,58 @@ class TaskManager:
         )
 
         self.tasks.append(task)
+
         self.save_tasks()
+
+        logger.info(
+            f"Task created: {title}"
+        )
 
     def list_tasks(self):
         return self.tasks
 
     def complete_task(self, task_id):
+
         for task in self.tasks:
+
             if task.id == task_id:
+
                 task.complete()
+
                 self.save_tasks()
+
+                logger.info(
+                    f"Task completed: {task.title}"
+                )
+
                 return True
 
         return False
 
     def delete_task(self, task_id):
+
         before = len(self.tasks)
 
         self.tasks = [
-            task for task in self.tasks
+            task
+            for task in self.tasks
             if task.id != task_id
         ]
 
         if len(self.tasks) != before:
+
             self.save_tasks()
+
+            logger.info(
+                f"Task deleted: {task_id}"
+            )
+
             return True
 
         return False
 
     def search_tasks(self, keyword):
+
         keyword = keyword.lower()
 
         return [
@@ -88,7 +129,10 @@ class TaskManager:
             if keyword in task.title.lower()
         ]
 
-    def filter_by_priority(self, priority):
+    def filter_by_priority(
+        self,
+        priority
+    ):
         return [
             task
             for task in self.tasks
