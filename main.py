@@ -54,12 +54,20 @@ while True:
             "Határidő (YYYY-MM-DD): "
         )
 
-        manager.add_task(
-            title,
-            category,
-            priority,
-            due_date
-        )
+        try:
+
+            manager.add_task(
+                title,
+                category,
+                priority,
+                due_date
+            )
+
+            print("Feladat létrehozva.")
+
+        except Exception as e:
+
+            print(f"Hiba: {e}")
 
     elif choice == "2":
 
@@ -73,9 +81,15 @@ while True:
             input("ID: ")
         )
 
-        manager.complete_task(
-            task_id
-        )
+        try:
+
+            manager.complete_task(task_id)
+
+            print("Készre jelölve.")
+
+        except Exception as e:
+
+            print(f"Hiba: {e}")
 
     elif choice == "4":
 

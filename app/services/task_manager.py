@@ -3,7 +3,10 @@ import os
 
 from app.models.task import Task
 from app.utils.logger import logger
-
+from app.validators.task_validator import (
+    validate_priority,
+    validate_date,
+)
 
 class TaskManager:
 
@@ -59,6 +62,8 @@ class TaskManager:
         priority="medium",
         due_date=None
     ):
+        validate_priority(priority)
+        validate_date(due_date)
 
         task = Task(
             task_id=self.generate_id(),
@@ -95,7 +100,13 @@ class TaskManager:
 
                 return True
 
-        return False
+        from app.exceptions.custom_exceptions import (
+            TaskNotFoundError
+        )
+
+        raise TaskNotFoundError(
+            f"Nincs ilyen task ID: {task_id}"
+        )
 
     def delete_task(self, task_id):
 
@@ -117,7 +128,13 @@ class TaskManager:
 
             return True
 
-        return False
+        from app.exceptions.custom_exceptions import (
+            TaskNotFoundError
+        )
+
+        raise TaskNotFoundError(
+            f"Nincs ilyen task ID: {task_id}"
+        )
 
     def search_tasks(self, keyword):
 
