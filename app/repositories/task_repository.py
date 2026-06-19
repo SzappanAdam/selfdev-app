@@ -1,7 +1,6 @@
 from app.database.database import SessionLocal
 from app.database.models import TaskModel
 
-
 class TaskRepository:
 
     def __init__(self):

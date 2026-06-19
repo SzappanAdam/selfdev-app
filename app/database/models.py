@@ -40,3 +40,28 @@ class TaskModel(Base):
         Boolean,
         default=False
     )
+
+class HabitModel(Base):
+
+    __tablename__ = "habits"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    name = Column(
+        String,
+        nullable=False
+    )
+
+    category = Column(
+        String,
+        nullable=True
+    )
+
+    active = Column(
+        Boolean,
+        default=True
+    )

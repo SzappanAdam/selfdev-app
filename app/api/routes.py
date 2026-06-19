@@ -54,3 +54,18 @@ def create_task(task: TaskCreate):
 @router.get("/stats")
 def get_stats():
     return manager.stats()
+
+@router.get("/habits")
+def get_habits():
+    return habit_manager.list_habits()
+
+
+@router.post("/habits")
+def create_habit(
+    name: str,
+    category: str
+):
+    return habit_manager.create_habit(
+        name,
+        category
+    )
