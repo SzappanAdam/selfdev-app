@@ -67,3 +67,31 @@ class TaskManager:
             for task in self.repo.get_all_tasks()
             if task.priority == priority
         ]
+    
+    def stats(self):
+
+        tasks = self.list_tasks()
+
+        total = len(tasks)
+
+        completed = len(
+            [t for t in tasks if t.done]
+        )
+
+        pending = total - completed
+
+        completion_rate = (
+            completed / total * 100
+            if total
+            else 0
+        )
+
+        return {
+            "total_tasks": total,
+            "completed_tasks": completed,
+            "pending_tasks": pending,
+            "completion_rate": round(
+                completion_rate,
+                2
+            )
+        }
