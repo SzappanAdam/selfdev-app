@@ -77,19 +77,16 @@ while True:
 
     elif choice == "3":
 
-        task_id = int(
-            input("ID: ")
-        )
+        task_id = int(input("ID: "))
 
-        try:
+        task = manager.repo.get_task(task_id)
 
-            manager.complete_task(task_id)
-
+        if task:
+            task.done = True
+            manager.repo.db.commit()
             print("Készre jelölve.")
-
-        except Exception as e:
-
-            print(f"Hiba: {e}")
+        else:
+            print("Nincs ilyen task.")
 
     elif choice == "4":
 

@@ -1,59 +1,10 @@
-import json
-import os
+from app.repositories.task_repository import TaskRepository
 
-from app.models.task import Task
-from app.utils.logger import logger
-from app.validators.task_validator import (
-    validate_priority,
-    validate_date,
-)
 
 class TaskManager:
 
-    def __init__(self, filename="tasks.json"):
-        self.filename = filename
-        self.tasks = []
-
-        self.load_tasks()
-
-    def load_tasks(self):
-
-        if not os.path.exists(self.filename):
-            self.tasks = []
-            return
-
-        with open(self.filename, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        self.tasks = [
-            Task.from_dict(task)
-            for task in data
-        ]
-
-    def save_tasks(self):
-
-        with open(
-            self.filename,
-            "w",
-            encoding="utf-8"
-        ) as f:
-
-            json.dump(
-                [task.to_dict() for task in self.tasks],
-                f,
-                indent=2,
-                ensure_ascii=False
-            )
-
-    def generate_id(self):
-
-        if not self.tasks:
-            return 1
-
-        return max(
-            task.id
-            for task in self.tasks
-        ) + 1
+    def __init__(self):
+        self.repo = TaskRepository()
 
     def add_task(
         self,
@@ -62,110 +13,57 @@ class TaskManager:
         priority="medium",
         due_date=None
     ):
-        validate_priority(priority)
-        validate_date(due_date)
-
-        task = Task(
-            task_id=self.generate_id(),
+        return self.repo.create_task(
             title=title,
             category=category,
             priority=priority,
-            due_date=due_date,
-        )
-
-        self.tasks.append(task)
-
-        self.save_tasks()
-
-        logger.info(
-            f"Task created: {title}"
+            due_date=due_date
         )
 
     def list_tasks(self):
-        return self.tasks
+        return self.repo.get_all_tasks()
 
     def complete_task(self, task_id):
+        task = self.repo.get_task(task_id)
 
-        for task in self.tasks:
+        if not task:
+            return False
 
-            if task.id == task_id:
-
-                task.complete()
-
-                self.save_tasks()
-
-                logger.info(
-                    f"Task completed: {task.title}"
-                )
-
-                return True
-
-        from app.exceptions.custom_exceptions import (
-            TaskNotFoundError
-        )
-
-        raise TaskNotFoundError(
-            f"Nincs ilyen task ID: {task_id}"
-        )
+        task.done = True
+        self.repo.db.commit()
+        return True
 
     def delete_task(self, task_id):
-
-        before = len(self.tasks)
-
-        self.tasks = [
-            task
-            for task in self.tasks
-            if task.id != task_id
-        ]
-
-        if len(self.tasks) != before:
-
-            self.save_tasks()
-
-            logger.info(
-                f"Task deleted: {task_id}"
-            )
-
-            return True
-
-        from app.exceptions.custom_exceptions import (
-            TaskNotFoundError
-        )
-
-        raise TaskNotFoundError(
-            f"Nincs ilyen task ID: {task_id}"
-        )
+        return self.repo.delete_task(task_id)
 
     def search_tasks(self, keyword):
+        tasks = self.repo.get_all_tasks()
 
         keyword = keyword.lower()
 
         return [
             task
-            for task in self.tasks
+            for task in tasks
             if keyword in task.title.lower()
-        ]
-
-    def filter_by_priority(
-        self,
-        priority
-    ):
-        return [
-            task
-            for task in self.tasks
-            if task.priority == priority
         ]
 
     def pending_tasks(self):
         return [
             task
-            for task in self.tasks
+            for task in self.repo.get_all_tasks()
             if not task.done
         ]
 
     def completed_tasks(self):
         return [
             task
-            for task in self.tasks
+            for task in self.repo.get_all_tasks()
             if task.done
+        ]
+
+    def filter_by_priority(self, priority):
+        return [
+            task
+            for task in self.repo.get_all_tasks()
+            if task.priority == priority
         ]
