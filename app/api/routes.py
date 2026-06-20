@@ -3,11 +3,15 @@ from fastapi import APIRouter
 from app.services.task_manager import TaskManager
 from app.schemas.task_schema import TaskResponse
 from app.schemas.task_schema import TaskCreate
+from datetime import date
+
+from app.services.habit_log_manager import (
+    HabitLogManager
+)
 
 router = APIRouter()
-
 manager = TaskManager()
-
+habit_log_manager = HabitLogManager()
 
 @router.get("/")
 def root():
@@ -68,4 +72,16 @@ def create_habit(
     return habit_manager.create_habit(
         name,
         category
+    )
+
+@router.post("/habits/{habit_id}/complete")
+def complete_habit(
+    habit_id: int
+):
+
+    today = date.today().isoformat()
+
+    return habit_log_manager.log_habit(
+        habit_id,
+        today
     )

@@ -2,6 +2,8 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Boolean
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database.database import Base
 
@@ -64,4 +66,30 @@ class HabitModel(Base):
     active = Column(
         Boolean,
         default=True
+    )
+
+class HabitLogModel(Base):
+
+    __tablename__ = "habit_logs"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    habit_id = Column(
+        Integer,
+        ForeignKey("habits.id"),
+        nullable=False
+    )
+
+    date = Column(
+        String,
+        nullable=False
+    )
+
+    completed = Column(
+        Boolean,
+        default=False
     )
