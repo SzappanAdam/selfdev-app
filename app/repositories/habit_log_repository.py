@@ -14,6 +14,18 @@ class HabitLogRepository:
         completed=True
     ):
 
+        existing = (
+            self.db.query(HabitLogModel)
+            .filter(
+                HabitLogModel.habit_id == habit_id,
+                HabitLogModel.date == date
+            )
+            .first()
+        )
+
+        if existing:
+            return existing
+        
         log = HabitLogModel(
             habit_id=habit_id,
             date=date,

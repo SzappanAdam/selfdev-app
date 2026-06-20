@@ -85,3 +85,17 @@ def complete_habit(
         habit_id,
         today
     )
+
+@router.get(
+    "/habits/{habit_id}/streak"
+)
+def get_streak(
+    habit_id: int
+):
+
+    return {
+        "habit_id": habit_id,
+        "streak": habit_log_manager.calculate_streak(
+            habit_id
+        )
+    }
