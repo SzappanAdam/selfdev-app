@@ -8,7 +8,11 @@ from datetime import date
 from app.services.habit_log_manager import (
     HabitLogManager
 )
+from app.services.analytics_service import (
+    AnalyticsService
+)
 
+analytics = AnalyticsService()
 router = APIRouter()
 manager = TaskManager()
 habit_log_manager = HabitLogManager()
@@ -99,3 +103,24 @@ def get_streak(
             habit_id
         )
     }
+
+@router.get("/analytics/completion-rate")
+def completion_rate():
+
+    return {
+        "completion_rate":
+        analytics.completion_rate()
+    }
+
+@router.get("/analytics/top-habit")
+def top_habit():
+
+    return {
+        "habit_id":
+        analytics.most_active_habit()
+    }
+
+@router.get("/analytics/weekly")
+def weekly():
+
+    return analytics.weekly_activity()

@@ -52,3 +52,15 @@ class HabitLogRepository:
             )
             .all()
         )
+    
+    def get_dataframe(self):
+
+        logs = self.repo.db.query(
+            self.repo.db.bind.tables["habit_logs"]
+        )
+    
+    def get_all_logs(self):
+
+        return self.db.query(
+            HabitLogModel
+        ).all()
