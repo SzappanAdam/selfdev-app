@@ -78,3 +78,16 @@ class AnalyticsService:
         )
 
         return result
+    
+    def habit_counts(self):
+
+        df = self.get_dataframe()
+
+        if df.empty:
+            return {}
+
+        return (
+            df.groupby("habit_id")
+            .size()
+            .to_dict()
+        )

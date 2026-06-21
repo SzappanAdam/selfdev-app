@@ -11,6 +11,13 @@ from app.services.habit_log_manager import (
 from app.services.analytics_service import (
     AnalyticsService
 )
+from fastapi.responses import StreamingResponse
+
+from app.services.chart_service import (
+    ChartService
+)
+
+chart_service = ChartService()
 
 analytics = AnalyticsService()
 router = APIRouter()
@@ -124,3 +131,29 @@ def top_habit():
 def weekly():
 
     return analytics.weekly_activity()
+
+@router.get("/charts/weekly")
+def weekly_chart():
+
+    image = (
+        chart_service
+        .weekly_activity_chart()
+    )
+
+    return StreamingResponse(
+        image,
+        media_type="image/png"
+    )
+
+@router.get("/charts/ranking")
+def ranking_chart():
+
+    image = (
+        chart_service
+        .habit_ranking_chart()
+    )
+
+    return StreamingResponse(
+        image,
+        media_type="image/png"
+    )
