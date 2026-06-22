@@ -91,3 +91,27 @@ class AnalyticsService:
             .size()
             .to_dict()
         )
+
+    def dashboard_summary(self):
+
+        df = self.get_dataframe()
+
+        total_logs = len(df)
+
+        completion_rate = (
+            round(df["completed"].mean() * 100, 2)
+            if not df.empty
+            else 0
+        )
+
+        active_habits = (
+            df["habit_id"].nunique()
+            if not df.empty
+            else 0
+        )
+
+        return {
+            "total_logs": total_logs,
+            "completion_rate": completion_rate,
+            "active_habits": active_habits
+        }

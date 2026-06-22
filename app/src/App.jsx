@@ -33,3 +33,63 @@ function App() {
 }
 
 export default App;
+
+import { useEffect, useState } from "react";
+
+import DashboardCard from "./components/DashboardCard";
+
+import {
+    getDashboard,
+    getTasks
+} from "./services/api";
+
+const [dashboard, setDashboard] =
+    useState(null);
+
+useEffect(() => {
+
+    async function loadData() {
+
+        const tasksData =
+            await getTasks();
+
+        const dashboardData =
+            await getDashboard();
+
+        setTasks(tasksData);
+        setDashboard(dashboardData);
+    }
+
+    loadData();
+
+}, []);
+
+{dashboard && (
+
+<div
+    style={{
+        display: "flex",
+        gap: "20px",
+        marginBottom: "30px"
+    }}
+>
+
+<DashboardCard
+    title="Logs"
+    value={dashboard.total_logs}
+/>
+
+<DashboardCard
+    title="Completion Rate"
+    value={`${dashboard.completion_rate}%`}
+/>
+
+<DashboardCard
+    title="Active Habits"
+    value={dashboard.active_habits}
+/>
+
+</div>
+
+)}
+

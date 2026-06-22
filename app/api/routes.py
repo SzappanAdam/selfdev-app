@@ -157,3 +157,22 @@ def ranking_chart():
         image,
         media_type="image/png"
     )
+
+@router.get("/dashboard")
+def dashboard():
+
+    return analytics.dashboard_summary()
+
+from app.services.insight_service import (
+    InsightService
+)
+
+insights = InsightService()
+
+@router.get("/insights")
+def get_insights():
+
+    return {
+        "insights":
+        insights.generate_insights()
+    }
