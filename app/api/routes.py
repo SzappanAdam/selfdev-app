@@ -176,3 +176,17 @@ def get_insights():
         "insights":
         insights.generate_insights()
     }
+
+from app.services.review_service import (
+    ReviewService
+)
+
+reviews = ReviewService()
+
+@router.get("/review/weekly")
+def weekly_review():
+
+    return {
+        "summary":
+        reviews.weekly_review()
+    }

@@ -115,3 +115,36 @@ class AnalyticsService:
             "completion_rate": completion_rate,
             "active_habits": active_habits
         }
+    
+from datetime import date, timedelta
+import pandas as pd
+
+def last_7_days_logs(self):
+
+    df = self.get_dataframe()
+
+    if df.empty:
+        return df
+
+    df["date"] = pd.to_datetime(df["date"])
+
+    seven_days_ago = (
+        pd.Timestamp.now()
+        - pd.Timedelta(days=7)
+    )
+
+    return df[
+        df["date"] >= seven_days_ago
+    ]
+
+def weekly_completion_rate(self):
+
+    df = self.last_7_days_logs()
+
+    if df.empty:
+        return 0
+
+    return round(
+        df["completed"].mean() * 100,
+        2
+    )

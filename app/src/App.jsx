@@ -93,3 +93,40 @@ useEffect(() => {
 
 )}
 
+export async function getWeeklyReview() {
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/review/weekly"
+        );
+
+    return await response.json();
+}
+
+function WeeklyReview({
+    summary
+}) {
+
+    return (
+
+        <div>
+
+            <h2>
+                Weekly Review
+            </h2>
+
+            {summary.map(
+                (item, index) => (
+
+                <p key={index}>
+                    {item}
+                </p>
+
+            ))}
+
+        </div>
+
+    )
+}
+
+export default WeeklyReview;
