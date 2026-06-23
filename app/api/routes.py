@@ -214,3 +214,32 @@ def create_goal(
 def get_goals():
 
     return goal_manager.list_goals()
+
+from app.services.goal_analytics_service import (
+    GoalAnalyticsService
+)
+
+goal_analytics = (
+    GoalAnalyticsService()
+)
+
+@router.get(
+    "/goals/{goal_id}/progress"
+)
+def goal_progress(
+    goal_id: int
+):
+
+    return {
+        "goal_id": goal_id,
+        "progress":
+            goal_analytics
+            .goal_progress(
+                goal_id
+            ),
+        "status":
+            goal_analytics
+            .goal_status(
+                goal_id
+            )
+    }

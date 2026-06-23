@@ -31,3 +31,18 @@ class HabitRepository:
         return self.db.query(
             HabitModel
         ).all()
+    
+    def get_habits_by_goal(
+        self,
+        goal_id
+    ):
+
+        return (
+            self.db.query(
+                HabitModel
+            )
+            .filter(
+                HabitModel.goal_id == goal_id
+            )
+            .all()
+        )
