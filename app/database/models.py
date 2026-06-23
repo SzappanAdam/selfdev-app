@@ -44,6 +44,8 @@ class TaskModel(Base):
         default=False
     )
 
+from sqlalchemy import ForeignKey
+
 class HabitModel(Base):
 
     __tablename__ = "habits"
@@ -69,6 +71,12 @@ class HabitModel(Base):
         default=True
     )
 
+    goal_id = Column(
+        Integer,
+        ForeignKey("goals.id"),
+        nullable=True
+)
+
 class HabitLogModel(Base):
 
     __tablename__ = "habit_logs"
@@ -88,6 +96,38 @@ class HabitLogModel(Base):
     date = Column(
         Date,
         nullable=False
+    )
+
+    completed = Column(
+        Boolean,
+        default=False
+    )
+
+from sqlalchemy import Date
+
+class GoalModel(Base):
+
+    __tablename__ = "goals"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    title = Column(
+        String,
+        nullable=False
+    )
+
+    description = Column(
+        String,
+        nullable=True
+    )
+
+    target_date = Column(
+        Date,
+        nullable=True
     )
 
     completed = Column(

@@ -190,3 +190,27 @@ def weekly_review():
         "summary":
         reviews.weekly_review()
     }
+
+from app.services.goal_manager import (
+    GoalManager
+)
+
+goal_manager = GoalManager()
+
+@router.post("/goals")
+def create_goal(
+    title: str,
+    description: str = "",
+    target_date: str | None = None
+):
+
+    return goal_manager.create_goal(
+        title,
+        description,
+        target_date
+    )
+
+@router.get("/goals")
+def get_goals():
+
+    return goal_manager.list_goals()
