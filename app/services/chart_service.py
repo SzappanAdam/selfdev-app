@@ -1,10 +1,6 @@
 import io
-
 import matplotlib.pyplot as plt
-
-from app.services.analytics_service import (
-    AnalyticsService
-)
+from app.services.analytics_service import AnalyticsService
 
 
 class ChartService:
@@ -12,66 +8,54 @@ class ChartService:
     def __init__(self):
         self.analytics = AnalyticsService()
 
+    def _save_chart(self, fig):
+
+        buffer = io.BytesIO()
+
+        fig.savefig(
+            buffer,
+            format="png",
+            bbox_inches="tight"
+        )
+
+        plt.close(fig)
+
+        buffer.seek(0)
+
+        return buffer
+
     def weekly_activity_chart(self):
 
         data = self.analytics.weekly_activity()
 
-        weeks = list(data.keys())
-        values = list(data.values())
+        if not data:
+            return None
 
-        plt.figure(figsize=(8, 4))
+        weeks, values = zip(*sorted(data.items()))
 
-        plt.bar(weeks, values)
+        fig, ax = plt.subplots(figsize=(8, 4))
 
-        plt.title("Weekly Activity")
-        plt.xlabel("Week")
-        plt.ylabel("Completed Habits")
+        ax.bar(weeks, values)
+        ax.set_title("Weekly Activity")
+        ax.set_xlabel("Week")
+        ax.set_ylabel("Completed Habits")
 
-        buffer = io.BytesIO()
+        return self._save_chart(fig)
 
-        plt.savefig(
-            buffer,
-            format="png",
-            bbox_inches="tight"
-        )
-
-        plt.close()
-
-        buffer.seek(0)
-
-        return buffer
-    
     def habit_ranking_chart(self):
 
         data = self.analytics.habit_counts()
 
-        habits = list(data.keys())
-        counts = list(data.values())
+        if not data:
+            return None
 
-        plt.figure(figsize=(8, 4))
+        habits, counts = zip(*sorted(data.items()))
 
-        plt.bar(
-            habits,
-            counts
-        )
+        fig, ax = plt.subplots(figsize=(8, 4))
 
-        plt.title(
-            "Habit Completion Ranking"
-        )
+        ax.bar(habits, counts)
+        ax.set_title("Habit Completion Ranking")
+        ax.set_xlabel("Habit")
+        ax.set_ylabel("Completions")
 
-        plt.xlabel("Habit")
-        plt.ylabel("Completions")
-
-        buffer = io.BytesIO()
-
-        plt.savefig(
-            buffer,
-            format="png",
-            bbox_inches="tight"
-        )
-
-        plt.close()
-
-        buffer.seek(0)
-
-        return buffer
+        return self._save_chart(fig)

@@ -25,9 +25,11 @@ def print_tasks(tasks):
         )
 
 
-while True:
+def main():
 
-    print("""
+    while True:
+
+        print("""
 ===== SELFDEV APP =====
 
 1 - Feladat hozzáadása
@@ -41,98 +43,63 @@ while True:
 0 - Kilépés
 """)
 
-    choice = input("Választás: ")
+        choice = input("Választás: ")
 
-    if choice == "1":
+        if choice == "1":
 
-        title = input("Cím: ")
-        category = input("Kategória: ")
-        priority = input(
-            "Prioritás (low/medium/high): "
-        )
-        due_date = input(
-            "Határidő (YYYY-MM-DD): "
-        )
+            title = input("Cím: ")
+            category = input("Kategória: ")
+            priority = input("Prioritás (low/medium/high): ")
+            due_date = input("Határidő (YYYY-MM-DD): ")
 
-        try:
+            try:
+                manager.add_task(
+                    title,
+                    category,
+                    priority,
+                    due_date
+                )
+                print("Feladat létrehozva.")
 
-            manager.add_task(
-                title,
-                category,
-                priority,
-                due_date
-            )
+            except Exception as e:
+                print(f"Hiba: {e}")
 
-            print("Feladat létrehozva.")
+        elif choice == "2":
+            print_tasks(manager.list_tasks())
 
-        except Exception as e:
+        elif choice == "3":
+            task_id = int(input("ID: "))
 
-            print(f"Hiba: {e}")
+            task = manager.repo.get_task(task_id)
 
-    elif choice == "2":
+            if task:
+                task.done = True
+                manager.repo.db.commit()
+                print("Készre jelölve.")
+            else:
+                print("Nincs ilyen task.")
 
-        print_tasks(
-            manager.list_tasks()
-        )
+        elif choice == "4":
+            task_id = int(input("ID: "))
+            manager.delete_task(task_id)
 
-    elif choice == "3":
+        elif choice == "5":
+            keyword = input("Kulcsszó: ")
+            print_tasks(manager.search_tasks(keyword))
 
-        task_id = int(input("ID: "))
+        elif choice == "6":
+            priority = input("Prioritás: ")
+            print_tasks(manager.filter_by_priority(priority))
 
-        task = manager.repo.get_task(task_id)
+        elif choice == "7":
+            print_tasks(manager.pending_tasks())
 
-        if task:
-            task.done = True
-            manager.repo.db.commit()
-            print("Készre jelölve.")
-        else:
-            print("Nincs ilyen task.")
+        elif choice == "8":
+            print_tasks(manager.completed_tasks())
 
-    elif choice == "4":
+        elif choice == "0":
+            break
 
-        task_id = int(
-            input("ID: ")
-        )
 
-        manager.delete_task(
-            task_id
-        )
-
-    elif choice == "5":
-
-        keyword = input(
-            "Kulcsszó: "
-        )
-
-        print_tasks(
-            manager.search_tasks(
-                keyword
-            )
-        )
-
-    elif choice == "6":
-
-        priority = input(
-            "Prioritás: "
-        )
-
-        print_tasks(
-            manager.filter_by_priority(
-                priority
-            )
-        )
-
-    elif choice == "7":
-
-        print_tasks(
-            manager.pending_tasks()
-        )
-
-    elif choice == "8":
-
-        print_tasks(
-            manager.completed_tasks()
-        )
-
-    elif choice == "0":
-        break
+if __name__ == "__main__":
+    main()

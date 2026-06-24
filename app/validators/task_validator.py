@@ -14,24 +14,31 @@ VALID_PRIORITIES = {
 
 def validate_priority(priority):
 
+    if not priority:
+        raise InvalidPriorityError("Hiányzó prioritás")
+
+    priority = priority.lower().strip()
+
     if priority not in VALID_PRIORITIES:
 
         raise InvalidPriorityError(
             f"Érvénytelen prioritás: {priority}"
         )
 
+    return priority
+
 
 def validate_date(date_string):
 
     if not date_string:
-        return
+        return None
 
     try:
-
-        datetime.strptime(
+        parsed = datetime.strptime(
             date_string,
             "%Y-%m-%d"
         )
+        return parsed.date()
 
     except ValueError:
 

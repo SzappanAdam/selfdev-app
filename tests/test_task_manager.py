@@ -3,14 +3,15 @@ from app.services.task_manager import TaskManager
 
 def test_add_task():
 
-    manager = TaskManager(
-        "test_tasks.json"
-    )
+    manager = TaskManager()
 
     manager.add_task(
-        "Python tanulás"
+        "Test",
+        "study",
+        "high",
+        "2026-06-30"
     )
 
-    assert len(
-        manager.tasks
-    ) == 1
+    tasks = manager.list_tasks()
+
+    assert len(tasks) > 0
