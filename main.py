@@ -2,6 +2,33 @@ from app.services.task_manager import TaskManager
 
 manager = TaskManager()
 
+from fastapi import FastAPI
+
+from app.api.routes import (
+    tasks,
+    habits,
+    goals,
+    analytics,
+    charts,
+    auth,
+    dashboard,
+    insights,
+    review,
+    root
+)
+
+app = FastAPI()
+
+app.include_router(tasks.router)
+app.include_router(habits.router)
+app.include_router(goals.router)
+app.include_router(analytics.router)
+app.include_router(charts.router)
+app.include_router(auth.router)
+app.include_router(dashboard.router)
+app.include_router(insights.router)
+app.include_router(review.router)
+app.include_router(root.router)
 
 def print_tasks(tasks):
 

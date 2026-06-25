@@ -2,6 +2,7 @@ from datetime import datetime
 
 
 class Task:
+
     def __init__(
         self,
         task_id,
@@ -25,7 +26,7 @@ class Task:
 
     def to_dict(self):
         return {
-            "task_id": self.id,
+            "id": self.id,
             "title": self.title,
             "category": self.category,
             "priority": self.priority,
@@ -36,4 +37,12 @@ class Task:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(**data)
+        return cls(
+            task_id=data.get("task_id") or data.get("id"),
+            title=data.get("title"),
+            category=data.get("category", "general"),
+            priority=data.get("priority", "medium"),
+            due_date=data.get("due_date"),
+            done=data.get("done", False),
+            created_at=data.get("created_at"),
+        )

@@ -1,23 +1,21 @@
-from app.database.database import (
-    SessionLocal
-)
+from app.database.models import UserModel
 
-from app.database.models import (
-    UserModel
-)
 
 class UserRepository:
 
-    def __init__(self):
+    def __init__(self, db):
+        self.db = db
 
-        self.db = SessionLocal()
+    def create_user(self, username, email, password_hash):
 
-    def create_user(
-        self,
-        username,
-        email,
-        password_hash
-    ):
+        existing = (
+            self.db.query(UserModel)
+            .filter(UserModel.email == email)
+            .first()
+        )
+
+        if existing:
+            raise ValueError("Email already exists")
 
         user = UserModel(
             username=username,
@@ -25,10 +23,28 @@ class UserRepository:
             password_hash=password_hash
         )
 
-        self.db.add(user)
+        try:
+            self.db.add(user)
+            self.db.commit()
+            self.db.refresh(user)
+            return user
 
-        self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
 
-        self.db.refresh(user)
+    def get_by_email(self, email):
 
-        return user
+        return (
+            self.db.query(UserModel)
+            .filter(UserModel.email == email)
+            .first()
+        )
+
+    def get_by_id(self, user_id):
+
+        return (
+            self.db.query(UserModel)
+            .filter(UserModel.id == user_id)
+            .first()
+        )

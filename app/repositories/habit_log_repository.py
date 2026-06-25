@@ -1,66 +1,49 @@
-from app.database.database import SessionLocal
 from app.database.models import HabitLogModel
 
 
 class HabitLogRepository:
 
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db):
+        self.db = db
 
-    def create_log(
-        self,
-        habit_id,
-        date,
-        completed=True
-    ):
+    def create_log(self, habit_id, log_date, completed=True):
 
         existing = (
             self.db.query(HabitLogModel)
             .filter(
                 HabitLogModel.habit_id == habit_id,
-                HabitLogModel.date == date
+                HabitLogModel.date == log_date
             )
             .first()
         )
 
         if existing:
             return existing
-        
+
         log = HabitLogModel(
             habit_id=habit_id,
-            date=date,
+            date=log_date,
             completed=completed
         )
 
-        self.db.add(log)
+        try:
+            self.db.add(log)
+            self.db.commit()
+            self.db.refresh(log)
+            return log
 
-        self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
 
-        self.db.refresh(log)
-
-        return log
-
-    def get_logs_for_habit(
-        self,
-        habit_id
-    ):
+    def get_logs_for_habit(self, habit_id):
 
         return (
             self.db.query(HabitLogModel)
-            .filter(
-                HabitLogModel.habit_id == habit_id
-            )
+            .filter(HabitLogModel.habit_id == habit_id)
             .all()
         )
-    
-    def get_dataframe(self):
 
-        logs = self.repo.db.query(
-            self.repo.db.bind.tables["habit_logs"]
-        )
-    
     def get_all_logs(self):
 
-        return self.db.query(
-            HabitLogModel
-        ).all()
+        return self.db.query(HabitLogModel).all()

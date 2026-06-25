@@ -34,10 +34,8 @@ class TaskModel(Base):
         default="medium"
     )
 
-    due_date = Column(
-        String,
-        nullable=True
-    )
+    due_date = Column(Date, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     done = Column(
         Boolean,
@@ -71,11 +69,9 @@ class HabitModel(Base):
         default=True
     )
 
-    goal_id = Column(
-        Integer,
-        ForeignKey("goals.id"),
-        nullable=True
-)
+    goal_id = Column(Integer, ForeignKey("goals.id"))
+
+    goal = relationship("GoalModel", back_populates="habits")
 
 class HabitLogModel(Base):
 
@@ -102,6 +98,8 @@ class HabitLogModel(Base):
         Boolean,
         default=False
     )
+
+    habit = relationship("HabitModel")
 
 from sqlalchemy import Date
 
@@ -134,6 +132,10 @@ class GoalModel(Base):
         Boolean,
         default=False
     )
+
+    habits = relationship("HabitModel", back_populates="goal")
+
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class UserModel(Base):
 
