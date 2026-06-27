@@ -1,26 +1,39 @@
-function InsightPanel({
-    insights
-}) {
+import { useEffect, useState } from "react";
+import { getInsights } from "../services/api";
+
+function InsightPanel() {
+
+    const [insights, setInsights] = useState([]);
+
+    useEffect(() => {
+
+        async function load() {
+
+            const data = await getInsights();
+            setInsights(data.insights);
+
+        }
+
+        load();
+
+    }, []);
 
     return (
 
-        <div>
+        <div className="panel">
 
-            <h2>
-                Coach Insights
-            </h2>
+            <h2>Insights</h2>
 
-            {insights.map(
-                (insight, index) => (
+            {insights.map((item, index) => (
 
-                <p key={index}>
-                    {insight}
-                </p>
+                <p key={index}>{item}</p>
 
             ))}
 
         </div>
-    )
+
+    );
+
 }
 
 export default InsightPanel;
